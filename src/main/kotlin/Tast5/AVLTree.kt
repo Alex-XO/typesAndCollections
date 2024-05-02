@@ -1,4 +1,7 @@
 package Tast5
+/*
+The AVLTree<T : Comparable<T>> class for creating a balanced binary search tree
+ */
 
 class Node<T : Comparable<T>>(var key: T) {
     var height: Int = 1
@@ -8,6 +11,63 @@ class Node<T : Comparable<T>>(var key: T) {
 
 class AVLTree<T : Comparable<T>>() {
     var root: Node<T>? = null
+
+    fun insert(key: T) {
+        root = insert(root, key)
+    }
+
+    fun delete(key: T) {
+        root = delete(root, key)
+    }
+
+    fun displayInOrder() {
+        displayInOrder(root)
+        println()
+    }
+
+    private fun insert(node: Node<T>?, key: T): Node<T> {
+        if (node == null) return Node(key)
+
+        if (key < node.key) {
+            node.left = insert(node.left, key)
+        } else if (key > node.key) {
+            node.right = insert(node.right, key)
+        } else {
+            return node
+        }
+
+        updateHeight(node)
+        return balance(node, key)
+    }
+
+    private fun delete(node: Node<T>?, key: T): Node<T>? {
+        if (node == null) return null
+
+        if (key < node.key) {
+            node.left = delete(node.left, key)
+        } else if (key > node.key) {
+            node.right = delete(node.right, key)
+        } else {
+            if (node.left == null || node.right == null) {
+                return node.left ?: node.right
+            }
+            val temp = minValueNode(node.right!!)
+            node.key = temp.key
+            node.right = delete(node.right, temp.key)
+        }
+
+        updateHeight(node)
+        return balance(node, node.key)
+    }
+
+    private fun displayInOrder(node: Node<T>?) {
+        if (node != null) {
+            displayInOrder(node.left)
+            print("${node.key} ")
+            displayInOrder(node.right)
+        }
+    }
+
     private fun height(node: Node<T>?): Int {
         return node?.height ?: 0
     }
@@ -40,25 +100,6 @@ class AVLTree<T : Comparable<T>>() {
         return x
     }
 
-    fun insert(key: T) {
-        root = insert(root, key)
-    }
-
-    private fun insert(node: Node<T>?, key: T): Node<T> {
-        if (node == null) return Node(key)
-
-        if (key < node.key) {
-            node.left = insert(node.left, key)
-        } else if (key > node.key) {
-            node.right = insert(node.right, key)
-        } else {
-            return node // Duplicate keys not allowed
-        }
-
-        updateHeight(node)
-        return balance(node, key)
-    }
-
     private fun balance(node: Node<T>, key: T): Node<T> {
         val balance = balanceFactor(node)
         if (balance > 1 && key < node.left!!.key) {
@@ -77,46 +118,13 @@ class AVLTree<T : Comparable<T>>() {
         }
         return node
     }
-    fun delete(key: T) {
-        root = delete(root, key)
-    }
-    private fun delete(node: Node<T>?, key: T): Node<T>? {
-        if (node == null) return null
 
-        if (key < node.key) {
-            node.left = delete(node.left, key)
-        } else if (key > node.key) {
-            node.right = delete(node.right, key)
-        } else {
-            if (node.left == null || node.right == null) {
-                return node.left ?: node.right
-            }
-            val temp = minValueNode(node.right!!)
-            node.key = temp.key
-            node.right = delete(node.right, temp.key)
-        }
-
-        updateHeight(node)
-        return balance(node, node.key)
-    }
     private fun minValueNode(node: Node<T>): Node<T> {
         var current = node
         while (current.left != null) current = current.left!!
         return current
     }
 
-    fun displayInOrder() {
-        displayInOrder(root)
-        println()
-    }
-
-    private fun displayInOrder(node: Node<T>?) {
-        if (node != null) {
-            displayInOrder(node.left)
-            print("${node.key} ")
-            displayInOrder(node.right)
-        }
-    }
 }
 
 fun main() {

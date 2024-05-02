@@ -1,5 +1,10 @@
 package Task4
 
+/*
+A generalized BinarySearchTree search tree<T : Comparable<T>>
+that supports inserting, deleting, and searching for items
+ */
+
 class Node<T : Comparable<T>>(var data: T) {
     var left: Node<T>? = null
     var right: Node<T>? = null
@@ -10,6 +15,14 @@ class BinarySearchTree<T : Comparable<T>>() {
 
     fun insert(value: T) {
         root = insertRecursive(root, value)
+    }
+
+    fun search(value: T): Boolean {
+        return searchRecursive(root, value)
+    }
+
+    fun delete(value: T) {
+        root = deleteRecursive(root, value)
     }
 
     private fun insertRecursive(current: Node<T>?, value: T): Node<T> {
@@ -24,10 +37,6 @@ class BinarySearchTree<T : Comparable<T>>() {
         return current
     }
 
-    fun search(value: T): Boolean {
-        return searchRecursive(root, value)
-    }
-
     private fun searchRecursive(current: Node<T>?, value: T): Boolean {
         if (current == null) {
             return false
@@ -40,10 +49,6 @@ class BinarySearchTree<T : Comparable<T>>() {
         } else {
             searchRecursive(current.right, value)
         }
-    }
-
-    fun delete(value: T) {
-        root = deleteRecursive(root, value)
     }
 
     private fun deleteRecursive(current: Node<T>?, value: T): Node<T>? {
